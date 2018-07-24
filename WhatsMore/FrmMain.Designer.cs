@@ -56,78 +56,78 @@
             // 
             // menuStrip1
             // 
+            resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuFile,
             this.mnuEdit,
             this.mnuLanguage,
             this.mnuHelp});
-            resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Name = "menuStrip1";
             // 
             // mnuFile
             // 
+            resources.ApplyResources(this.mnuFile, "mnuFile");
             this.mnuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuExit});
             this.mnuFile.Name = "mnuFile";
-            resources.ApplyResources(this.mnuFile, "mnuFile");
             // 
             // mnuExit
             // 
-            this.mnuExit.Name = "mnuExit";
             resources.ApplyResources(this.mnuExit, "mnuExit");
+            this.mnuExit.Name = "mnuExit";
             this.mnuExit.Click += new System.EventHandler(this.MnuExit_Click);
             // 
             // mnuEdit
             // 
+            resources.ApplyResources(this.mnuEdit, "mnuEdit");
             this.mnuEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuOptions});
             this.mnuEdit.Name = "mnuEdit";
-            resources.ApplyResources(this.mnuEdit, "mnuEdit");
             // 
             // mnuOptions
             // 
-            this.mnuOptions.Name = "mnuOptions";
             resources.ApplyResources(this.mnuOptions, "mnuOptions");
+            this.mnuOptions.Name = "mnuOptions";
             this.mnuOptions.Click += new System.EventHandler(this.MnuOptions_Click);
             // 
             // mnuLanguage
             // 
+            resources.ApplyResources(this.mnuLanguage, "mnuLanguage");
             this.mnuLanguage.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuEnglish,
             this.mnuSpanish});
             this.mnuLanguage.Name = "mnuLanguage";
-            resources.ApplyResources(this.mnuLanguage, "mnuLanguage");
             // 
             // mnuEnglish
             // 
-            this.mnuEnglish.Name = "mnuEnglish";
             resources.ApplyResources(this.mnuEnglish, "mnuEnglish");
+            this.mnuEnglish.Name = "mnuEnglish";
             this.mnuEnglish.Click += new System.EventHandler(this.MnuEnglish_Click);
             // 
             // mnuSpanish
             // 
-            this.mnuSpanish.Name = "mnuSpanish";
             resources.ApplyResources(this.mnuSpanish, "mnuSpanish");
+            this.mnuSpanish.Name = "mnuSpanish";
             this.mnuSpanish.Click += new System.EventHandler(this.MnuSpanish_Click);
             // 
             // mnuHelp
             // 
+            resources.ApplyResources(this.mnuHelp, "mnuHelp");
             this.mnuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuAbout});
             this.mnuHelp.Name = "mnuHelp";
-            resources.ApplyResources(this.mnuHelp, "mnuHelp");
             // 
             // mnuAbout
             // 
-            this.mnuAbout.Name = "mnuAbout";
             resources.ApplyResources(this.mnuAbout, "mnuAbout");
+            this.mnuAbout.Name = "mnuAbout";
             this.mnuAbout.Click += new System.EventHandler(this.MnuAbout_Click);
             // 
             // groupBox1
             // 
+            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Controls.Add(this.pbSending);
             this.groupBox1.Controls.Add(this.txtNumbers);
-            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.TabStop = false;
             // 
@@ -138,9 +138,9 @@
             // 
             // txtNumbers
             // 
+            resources.ApplyResources(this.txtNumbers, "txtNumbers");
             this.txtNumbers.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtNumbers.DataBindings.Add(new System.Windows.Forms.Binding("ReadOnly", global::WhatsMore.Properties.Settings.Default, "isSending", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            resources.ApplyResources(this.txtNumbers, "txtNumbers");
             this.txtNumbers.Name = "txtNumbers";
             this.txtNumbers.ReadOnly = global::WhatsMore.Properties.Settings.Default.isSending;
             this.txtNumbers.TextChanged += new System.EventHandler(this.TxtNumbers_TextChanged);
