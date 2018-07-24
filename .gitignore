@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# My additional ignores
+/[Rr]esources
+*.licenseheader
+
 # User-specific files
 *.suo
 *.user
@@ -322,4 +326,3 @@ ASALocalRun/
 
 # NVidia Nsight GPU debugger configuration file
 *.nvuser
-/Resources
