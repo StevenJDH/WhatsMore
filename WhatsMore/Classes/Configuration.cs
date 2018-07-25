@@ -25,10 +25,11 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace WhatsMore
 {
-    sealed class Settings
+    sealed class Configuration
     {
         private AES aes;
         private readonly string aesKey;
@@ -36,10 +37,10 @@ namespace WhatsMore
         public string Sender { get; set; }
         public string ApiToken { get; set; }
         public string Message { get; set; }
-        private static string SettingsPath { get; set; }
-        public static Settings Instance { get; private set; }
+        private static string configPath { get; set; }
+        public static Configuration Instance { get; private set; }
         
-        private Settings()
+        private Configuration()
         {
             aes = new AES();
             // Hard-coded keys for AES encryption.
@@ -47,56 +48,65 @@ namespace WhatsMore
             aesSaltKey = "Ì¥Ø¡eÈ";
         }
 
-        static Settings()
+        static Configuration()
         {
-            // Path to settings file that is stored in the %AppData%/WhatsMore directory.
-            SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), 
+            // Path to configuration file that is stored in the %AppData%/WhatsMore directory.
+            configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), 
                 "WhatsMore", "WhatsMoreConfig.json");
-            // Singleton design pattern.
-            Instance = LoadSettings();
+            try
+            {
+                // Singleton design pattern.
+                Instance = LoadSettings();
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show(Properties.Strings.Error_MissingJsonDllExit,
+                        "WhatsMore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Process.GetCurrentProcess().Kill();
+            }
         }
 
-        private static Settings LoadSettings()
+        private static Configuration LoadSettings()
         {
-            if (File.Exists(SettingsPath))
+            if (File.Exists(configPath))
             {
-                string jsonData = File.ReadAllText(SettingsPath);
+                string jsonData = File.ReadAllText(configPath);
 
                 if (String.IsNullOrWhiteSpace(jsonData))
                 {
                     MessageBox.Show(Properties.Strings.Error_ConfigCorrupt,
                         "WhatsMore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return new Settings();
+                    return new Configuration();
                 }
 
                 // Any trouble reading the configuration will just use the defaults.
                 try
                 {
-                    return JsonConvert.DeserializeObject<Settings>(jsonData);
+                    return JsonConvert.DeserializeObject<Configuration>(jsonData);
                 }
                 catch (JsonReaderException)
                 {
                     MessageBox.Show(Properties.Strings.Error_ConfigCorrupt,
                         "WhatsMore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return new Settings();
+                    return new Configuration();
                 }
             }
             else
             {
-                MessageBox.Show(Properties.Strings.Info_FirstTimeConfig, 
+                MessageBox.Show(Properties.Strings.Info_FirstTimeConfig,
                     "WhatsMore", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return new Settings();
+                return new Configuration();
             }
         }
 
         public void SaveSettings()
         {
             string jsonData = JsonConvert.SerializeObject(Instance, Formatting.Indented);
-            
-            // Builds any missing folders in path where the settings will be stored.
-            Directory.CreateDirectory(Path.GetDirectoryName(SettingsPath));
-            // Saves the settings to profile.
-            File.WriteAllText(SettingsPath, jsonData);
+
+            // Builds any missing folders in path where the configuration will be stored.
+            Directory.CreateDirectory(Path.GetDirectoryName(configPath));
+            // Saves the configuration to profile.
+            File.WriteAllText(configPath, jsonData);
         }
 
         [OnSerializing]

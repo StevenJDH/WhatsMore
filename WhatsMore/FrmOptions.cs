@@ -31,28 +31,28 @@ namespace WhatsMore
 {
     public partial class FrmOptions : Form
     {
-        private Settings settings;
+        private Configuration config;
 
         public FrmOptions()
         {
             InitializeComponent();
-            settings = Settings.Instance;
+            config = Configuration.Instance;
         }
 
         private void FrmOptions_Load(object sender, EventArgs e)
         {
-            txtNumber.Text = settings.Sender;
-            txtAPI.Text = settings.ApiToken;
-            txtMessage.Text = settings.Message;
+            txtNumber.Text = config.Sender;
+            txtAPI.Text = config.ApiToken;
+            txtMessage.Text = config.Message;
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            settings.Sender = txtNumber.Text;
-            settings.ApiToken = txtAPI.Text;
-            settings.Message = txtMessage.Text;
+            config.Sender = txtNumber.Text;
+            config.ApiToken = txtAPI.Text;
+            config.Message = txtMessage.Text;
 
-            settings.SaveSettings();
+            config.SaveSettings();
             Close();
         }
 

@@ -34,18 +34,20 @@ namespace WhatsMore
 {
     public partial class FrmMain : Form
     {
-        private Settings settings = Settings.Instance; // Ensures first time message displays.
+        private Configuration config;
 
         public FrmMain()
         {
             InitializeComponent();
+            // Gets singleton instance and will show a one-time reminder message for configuration.
+            config = Configuration.Instance;
         }
 
         private async void BtnSend_Click(object sender, EventArgs e)
         {
             // Ensures that the program has been configured.
-            if (String.IsNullOrWhiteSpace(settings.Sender) || String.IsNullOrWhiteSpace(settings.ApiToken) ||
-                String.IsNullOrWhiteSpace(settings.Message))
+            if (String.IsNullOrWhiteSpace(config.Sender) || String.IsNullOrWhiteSpace(config.ApiToken) ||
+                String.IsNullOrWhiteSpace(config.Message))
             {
                 MnuOptions_Click(this, EventArgs.Empty); // Prompts for configuration.
                 return;
@@ -63,7 +65,7 @@ namespace WhatsMore
 
             int totalNumbers = txtNumbers.Lines.Length;
             List<string> notSentList = new List<string>();
-            WaboxAppAPI whatsapp = new WaboxAppAPI(settings.ApiToken, settings.Sender);
+            WaboxAppAPI whatsapp = new WaboxAppAPI(config.ApiToken, config.Sender);
 
             try
             {
@@ -73,12 +75,12 @@ namespace WhatsMore
                 switch (phoneState)
                 {
                     case PhoneState.NoWhatsAppSession:
-                        MessageBox.Show(String.Format(Properties.Strings.Alert_WhatsAppNotConnected, settings.Sender),
+                        MessageBox.Show(String.Format(Properties.Strings.Alert_WhatsAppNotConnected, config.Sender),
                             this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         Properties.Settings.Default.isSending = false;
                         return;
                     case PhoneState.Unauthorized:
-                        MessageBox.Show(String.Format(Properties.Strings.Error_UnauthorizedSender, settings.Sender),
+                        MessageBox.Show(String.Format(Properties.Strings.Error_UnauthorizedSender, config.Sender),
                             this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                         Properties.Settings.Default.isSending = false;
                         return;
@@ -90,7 +92,7 @@ namespace WhatsMore
                 {
                     string msgID = Guid.NewGuid().ToString("N"); // The 'N' removes dashes in GUID.
                     WaboxAppResponse response = await whatsapp.SendMessageAsync(/* "32" + */ txtNumbers.Lines[i],
-                        msgID, settings.Message);
+                        msgID, config.Message);
                     if (response == null || response.HasError)
                     {
                         notSentList.Add(txtNumbers.Lines[i]);

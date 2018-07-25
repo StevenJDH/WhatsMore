@@ -135,6 +135,9 @@
   <data name="Error_GetRequestFailed" xml:space="preserve">
     <value>Error: Get request failed. Please check your connection.</value>
   </data>
+  <data name="Error_MissingJsonDllExit" xml:space="preserve">
+    <value>Error: The 'Newtonsoft.Json.dll' file is missing. The program will now exit.</value>
+  </data>
   <data name="Error_UnauthorizedSender" xml:space="preserve">
     <value>Error: The number '{0}' is not authorized to send messages.</value>
   </data>

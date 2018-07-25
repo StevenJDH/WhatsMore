@@ -115,6 +115,15 @@ namespace WhatsMore.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error: The &apos;Newtonsoft.Json.dll&apos; file is missing. The program will now exit..
+        /// </summary>
+        internal static string Error_MissingJsonDllExit {
+            get {
+                return ResourceManager.GetString("Error_MissingJsonDllExit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error: The number &apos;{0}&apos; is not authorized to send messages..
         /// </summary>
         internal static string Error_UnauthorizedSender {

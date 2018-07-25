@@ -54,7 +54,7 @@
   <ItemGroup>
     <Compile Include="Classes\AES.cs" />
     <Compile Include="Classes\Connection.cs" />
-    <Compile Include="Classes\Settings.cs" />
+    <Compile Include="Classes\Configuration.cs" />
     <Compile Include="Classes\WaboxAppPhoneInfoResponse.cs" />
     <Compile Include="FrmMain.cs">
       <SubType>Form</SubType>
