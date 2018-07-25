@@ -28,61 +28,87 @@ namespace WhatsMore
 {
     class AES
     {
-        private string SaltKey { get; set; }
-
-        public AES() => SaltKey = "Ì¥Ø¡eÈ"; // Hard-coded salt key for AES encryption.
-
-        public string Encrypt(string clearText, string passKey)
+        /// <summary>
+        /// Encrypts text using AES 256-bit encryption and a salted password.
+        /// </summary>
+        /// <param name="clearText">Unencrypted text</param>
+        /// <param name="passKey">Password to be used for encryption</param>
+        /// <param name="saltKey">Salt to be used with password that can be any data of at least 8 bytes</param>
+        /// <returns>Encrypted text</returns>
+        public string Encrypt(string clearText, string passKey, string saltKey)
         {
             byte[] clearBytes = Encoding.UTF8.GetBytes(clearText);
             byte[] passBytes = Encoding.UTF8.GetBytes(passKey);
-            byte[] saltBytes = getFrontLockSha(passKey, SaltKey); // The salt argument can be any data of at least 8 bytes.
+            byte[] saltBytes = getFrontLockSha(passKey, saltKey);
 
-            return Convert.ToBase64String(AESEncryptBytes(clearBytes, passBytes, saltBytes));
+            return Convert.ToBase64String(Encrypt(clearBytes, passBytes, saltBytes));
         }
 
-        public string Decrypt(string cryptText, string passKey)
+        /// <summary>
+        /// Decrypts text that was encrypted using AES 256-bit encryption and a salted password.
+        /// </summary>
+        /// <param name="cryptText">Encrypted text</param>
+        /// <param name="passKey">Password that was used to encrypt text</param>
+        /// <param name="saltKey">Salt that was used with password that is at least 8 bytes</param>
+        /// <returns>Decrypted text</returns>
+        public string Decrypt(string cryptText, string passKey, string saltKey)
         {
             byte[] cryptBytes = Convert.FromBase64String(cryptText);
             byte[] passBytes = Encoding.UTF8.GetBytes(passKey);
-            byte[] saltBytes = getFrontLockSha(passKey, SaltKey); // The salt argument can be any data of at least 8 bytes.
+            byte[] saltBytes = getFrontLockSha(passKey, saltKey);
 
-            return Encoding.UTF8.GetString(AESDecryptBytes(cryptBytes, passBytes, saltBytes));
+            return Encoding.UTF8.GetString(Decrypt(cryptBytes, passBytes, saltBytes));
         }
 
+        /// <summary>
+        /// Gets a SHA512 hash representation of the salted password in bytes.
+        /// </summary>
+        /// <param name="passKey">Encryption password</param>
+        /// <param name="saltKey">Salt used with password</param>
+        /// <returns>Hashed byte data from salted password</returns>
         private byte[] getFrontLockSha(string passKey, string saltKey)
         {
-            string saltString = passKey + saltKey;
+            ASCIIEncoding asciiEncoding = new ASCIIEncoding();
+            // Converts text to bytes and gets hash.
+            byte[] saltedPaswordBytes = asciiEncoding.GetBytes(passKey + saltKey);
 
-            // Convert text to bytes to get hash.
-            ASCIIEncoding AE = new ASCIIEncoding();
-
-            byte[] saltBuffer = AE.GetBytes(saltString);
-            return GetSHA512(saltBuffer);
+            return GetSHA512(saltedPaswordBytes);
         }
 
-        private byte[] GetSHA512(byte[] plainBuf)
+        /// <summary>
+        /// Hashes byte data using the SHA512 cryptographic hashing function.
+        /// </summary>
+        /// <param name="plainData">Byte data to be hashed</param>
+        /// <returns>Hashed byte data</returns>
+        private byte[] GetSHA512(byte[] plainData)
         {
-            byte[] hash;
+            byte[] hash = null;
+
             using (SHA512Managed hashVal = new SHA512Managed())
             {
-                hash = hashVal.ComputeHash(plainBuf);
+                hash = hashVal.ComputeHash(plainData);
             }
             return hash;
         }
 
-        private byte[] AESEncryptBytes(byte[] clearBytes, byte[] passBytes, byte[] saltBytes)
+        /// <summary>
+        /// Encrypts byte data using AES 256-bit encryption and a salted password.
+        /// </summary>
+        /// <param name="clearBytes">Unencrypted byte data</param>
+        /// <param name="passBytes">Password to be used for encryption</param>
+        /// <param name="saltBytes">Salt to be used with password that can be any data of at least 8 bytes</param>
+        /// <returns>Encrypted byte data</returns>
+        public byte[] Encrypt(byte[] clearBytes, byte[] passBytes, byte[] saltBytes)
         {
             byte[] encryptedBytes = null;
 
-            // Create a key from the password and salt, use 32K iterations.
+            // Creates a key from the password and salt using 32K iterations.
             var key = new Rfc2898DeriveBytes(passBytes, saltBytes, 32768);
 
-            // Create an AES object.
+            // Creates an Aes object not to be confused with this class.
             using (Aes aes = new AesManaged())
             {
-                // Set the key size to 256.
-                aes.KeySize = 256;
+                aes.KeySize = 256; // Set the key size to 256.
                 aes.Key = key.GetBytes(aes.KeySize / 8);
                 aes.IV = key.GetBytes(aes.BlockSize / 8);
                 using (MemoryStream ms = new MemoryStream())
@@ -98,11 +124,18 @@ namespace WhatsMore
             return encryptedBytes;
         }
 
-        private byte[] AESDecryptBytes(byte[] cryptBytes, byte[] passBytes, byte[] saltBytes)
+        /// <summary>
+        /// Decrypts byte data that was encrypted using AES 256-bit encryption and a salted password.
+        /// </summary>
+        /// <param name="cryptBytes">Encrypted byte data</param>
+        /// <param name="passBytes">Password that was used to encrypt byte data</param>
+        /// <param name="saltBytes">Salt that was used with password that is at least 8 bytes</param>
+        /// <returns>Decrypted byte data</returns>
+        public byte[] Decrypt(byte[] cryptBytes, byte[] passBytes, byte[] saltBytes)
         {
             byte[] clearBytes = null;
 
-            // Create a key from the password and salt, use 32K iterations.
+            // Creates a key from the password and salt using 32K iterations.
             var key = new Rfc2898DeriveBytes(passBytes, saltBytes, 32768);
 
             using (Aes aes = new AesManaged())

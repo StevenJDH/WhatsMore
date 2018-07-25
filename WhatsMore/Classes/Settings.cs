@@ -31,7 +31,8 @@ namespace WhatsMore
     sealed class Settings
     {
         private AES aes;
-        private string AESKey { get; set; }
+        private readonly string aesKey;
+        private readonly string aesSaltKey;
         public string Sender { get; set; }
         public string ApiToken { get; set; }
         public string Message { get; set; }
@@ -41,7 +42,9 @@ namespace WhatsMore
         private Settings()
         {
             aes = new AES();
-            AESKey = "3;eR*h9X6$7dVQZS"; // Hard-coded key for AES encryption.
+            // Hard-coded keys for AES encryption.
+            aesKey = "3;eR*h9X6$7dVQZS";
+            aesSaltKey = "Ì¥Ø¡eÈ";
         }
 
         static Settings()
@@ -99,19 +102,19 @@ namespace WhatsMore
         [OnSerializing]
         private void OnSerializingMethod(StreamingContext context)
         {
-            ApiToken = aes.Encrypt(ApiToken, AESKey);
+            ApiToken = aes.Encrypt(ApiToken, aesKey, aesSaltKey);
         }
 
         [OnSerialized]
         private void OnSerializedMethod(StreamingContext context)
         {
-            ApiToken = aes.Decrypt(ApiToken, AESKey);
+            ApiToken = aes.Decrypt(ApiToken, aesKey, aesSaltKey);
         }
 
         [OnDeserialized]
         private void OnDeserializedMethod(StreamingContext context)
         {
-            ApiToken = aes.Decrypt(ApiToken, AESKey);
+            ApiToken = aes.Decrypt(ApiToken, aesKey, aesSaltKey);
         }
     }
 }
