@@ -31,7 +31,7 @@ namespace WhatsMore
 {
     public partial class FrmOptions : Form
     {
-        private Configuration config;
+        private readonly Configuration config;
 
         public FrmOptions()
         {
@@ -76,6 +76,11 @@ namespace WhatsMore
             btnSave.Enabled = FieldsValidated();
         }
 
+        /// <summary>
+        /// Checks to see if actual data was entered in and that length and data requirements
+        /// are met in all the fields.
+        /// </summary>
+        /// <returns>Pass or fail result of the validation test</returns>
         private bool FieldsValidated()
         {
             return (String.IsNullOrWhiteSpace(txtNumber.Text) == false &&
@@ -86,6 +91,7 @@ namespace WhatsMore
 
         private void TxtNumber_KeyPress(object sender, KeyPressEventArgs e)
         {
+            // Allows only numbers to be entered in for the sender's phone number.
             e.Handled = char.IsDigit(e.KeyChar) == false && char.IsControl(e.KeyChar) == false;
         }
     }
