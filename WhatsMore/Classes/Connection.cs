@@ -41,6 +41,10 @@ namespace WhatsMore
         [DllImport("wininet.dll", CharSet = CharSet.Auto)]
         private extern static bool InternetGetConnectedState(ref ConnectionState lpdwFlags, int dwReserved);
 
+        /// <summary>
+        /// Checks to see if the system has an active connection to the Internet.
+        /// </summary>
+        /// <returns>Connected or not result</returns>
         public static bool IsInternetAvailable()
         {
             ConnectionState connectionState = 0;
