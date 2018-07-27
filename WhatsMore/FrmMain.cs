@@ -34,124 +34,117 @@ namespace WhatsMore
 {
     public partial class FrmMain : Form
     {
-        private Configuration config;
+        private Ref<bool> cancelRequested;
+        private readonly Configuration config;
 
         public FrmMain()
         {
             InitializeComponent();
-            // Gets singleton instance and will show a one-time reminder message for configuration.
+            // Using custom type for cancellation because the token approach was randomly
+            // setting itself to true when evaluated and because we can't use the ref
+            // keyword in a async method.
+            cancelRequested = new Ref<bool>();
+            // Gets singleton instance, and it will show a one-time reminder message for configuration.
             config = Configuration.Instance;
         }
 
         private async void BtnSend_Click(object sender, EventArgs e)
         {
-            // Ensures that the program has been configured.
-            if (String.IsNullOrWhiteSpace(config.Sender) || String.IsNullOrWhiteSpace(config.ApiToken) ||
-                String.IsNullOrWhiteSpace(config.Message))
+            if (Properties.Settings.Default.isSending == false)
             {
-                MnuOptions_Click(this, EventArgs.Empty); // Prompts for configuration.
-                return;
-            }
-            if (Connection.IsInternetAvailable() == false)
-            {
-                MessageBox.Show(Properties.Strings.Alert_NoInternetConnection,
-                    this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                Properties.Settings.Default.isSending = false;
-                return;
-            }
+                // Ensures that the program has been configured.
+                if (String.IsNullOrWhiteSpace(config.Sender) || String.IsNullOrWhiteSpace(config.ApiToken) ||
+                    String.IsNullOrWhiteSpace(config.Message))
+                {
+                    MnuConfig_Click(this, EventArgs.Empty); // Prompts for configuration.
+                    return;
+                }
 
-            // Removes blank lines from list of numbers.
-            txtNumbers.Text = Regex.Replace(txtNumbers.Text, "\\s+\r\n", "\r\n").Trim();
+                // Ensures that there is an internet connection before starting the sending process.
+                if (Connection.IsInternetAvailable() == false)
+                {
+                    MessageBox.Show(Properties.Strings.Alert_NoInternetConnection,
+                        this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
 
-            int totalNumbers = txtNumbers.Lines.Length;
-            List<string> notSentList = new List<string>();
-            WaboxAppAPI whatsapp = new WaboxAppAPI(config.ApiToken, config.Sender);
-
-            try
-            {
+                // Prepares state information for the sending process.
                 Properties.Settings.Default.isSending = true;
+                Properties.Settings.Default.ControlsEnabled = false;
+                btnSend.Text = Properties.Strings.Cancel; // Changes the Send button to a Cancel button.
 
-                PhoneState phoneState = await whatsapp.GetPhoneConnectedStateAsync();
-                switch (phoneState)
+                WaboxAppAPI whatsapp = new WaboxAppAPI(config.ApiToken, config.Sender);
+
+                try
                 {
-                    case PhoneState.NoWhatsAppSession:
-                        MessageBox.Show(String.Format(Properties.Strings.Alert_WhatsAppNotConnected, config.Sender),
-                            this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                        Properties.Settings.Default.isSending = false;
-                        return;
-                    case PhoneState.Unauthorized:
-                        MessageBox.Show(String.Format(Properties.Strings.Error_UnauthorizedSender, config.Sender),
-                            this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        Properties.Settings.Default.isSending = false;
-                        return;
-                }
+                    PhoneState phoneState = await whatsapp.GetPhoneConnectedStateAsync();
 
-                pbSending.Maximum = totalNumbers;
-
-                for (int i = 0; i < totalNumbers; i++)
-                {
-                    string msgID = Guid.NewGuid().ToString("N"); // The 'N' removes dashes in GUID.
-                    WaboxAppResponse response = await whatsapp.SendMessageAsync(/* "32" + */ txtNumbers.Lines[i],
-                        msgID, config.Message);
-                    if (response == null || response.HasError)
+                    if (phoneState == PhoneState.NoWhatsAppSession)
                     {
-                        notSentList.Add(txtNumbers.Lines[i]);
+                        MessageBox.Show(String.Format(Properties.Strings.Alert_WhatsAppNotConnected, config.Sender),
+                                this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
+                    else if (phoneState == PhoneState.Unauthorized)
+                    {
+                        MessageBox.Show(String.Format(Properties.Strings.Error_UnauthorizedSender, config.Sender),
+                                this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else // Everything is connected and ready.
+                    {
+                        List<string> notSentList = new List<string>();
 
-                    pbSending.Value += 1;
-                    SetProgressNoAnimation(pbSending);
+                        // Send the batch messages.
+                        await whatsapp.SendBatchMessagesAsync(txtNumbers, config.Message, notSentList,
+                            pbSending, cancelRequested);
+
+                        // Saves to file those numbers that had sending issues or got canceled.
+                        if (notSentList.Count > 0) { SaveNotSent(notSentList); }
+
+                        MessageBox.Show(String.Format(Properties.Strings.Info_SentSuccessful,
+                            pbSending.Maximum - notSentList.Count, pbSending.Maximum),
+                            this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                catch (Exception)
+                {
+                    // Generic message for multiple possible exceptions that are handled the same.
+                    MessageBox.Show(Properties.Strings.Error_GetRequestFailed, this.Text,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
-                // Save numbers that could not be sent to file.
-                if (notSentList.Count > 0) { SaveNotSent(notSentList); }
-
-                MessageBox.Show(String.Format(Properties.Strings.Info_SentSuccessful,
-                    totalNumbers - notSentList.Count, totalNumbers),
-                    this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception)
-            {
-                // Generic message for multiple possible exceptions that are handled the same.
-                MessageBox.Show(Properties.Strings.Error_GetRequestFailed, this.Text,
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
+                // Resets everything after sending process is done.
                 pbSending.Value = 0;
                 Properties.Settings.Default.isSending = false;
+                Properties.Settings.Default.ControlsEnabled = true;
+                cancelRequested = false;
+                btnSend.Text = Properties.Strings.Send;
+                btnSend.Enabled = true;
+            }
+            else // Cancel button mode.
+            {
+                btnSend.Enabled = false; // Disabled to prevent canceling twice.
+                cancelRequested = true;
             }
         }
 
-        // Sets the progress bar value, without using Windows Aero animation
-        private void SetProgressNoAnimation(ProgressBar pb)
-        {
-            // To get around this animation, we need to move the progress bar backwards.
-            // Special case (can't set value > Maximum).
-            if (pb.Value == pb.Maximum)
-            {
-                pb.Maximum += 1;
-                pb.Value += 1; // Moves past
-                pb.Value -= 1; // and back to set correct value
-                pb.Maximum -= 1;
-            }
-            else
-            {
-                pb.Value += 1; // Moves past
-                pb.Value -= 1; // and back to set correct value
-            }
-        }
-
+        /// <summary>
+        /// Saves a log to the desktop for those numbers that had issues during the sending
+        /// process. The date and time will be appended to the log so that it doesn't overwrite
+        /// a previous sending session.
+        /// </summary>
+        /// <param name="numbersList">List of numbers to save to the log</param>
         private void SaveNotSent(List<string> numbersList)
         {
             string desktopPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
             $"WhatsMore Log_{DateTime.Now.ToString("yyyy-MM-dd_HHmmss")}.txt");
-
+            
             File.WriteAllLines(desktopPath, numbersList);
         }
 
         private void FrmMain_Closing(object sender, FormClosingEventArgs e)
         {
-            e.Cancel = Properties.Settings.Default.isSending; // Prevents program from exiting if sending messages.
+            // Prevents program from exiting if sending messages.
+            e.Cancel = Properties.Settings.Default.isSending;
         }
 
         private void MnuSpanish_Click(object sender, EventArgs e)
@@ -164,8 +157,13 @@ namespace WhatsMore
             ChangeLocale("en");
         }
 
+        /// <summary>
+        /// Changes the working locale and refreshes the interface to see the new language applied.
+        /// </summary>
+        /// <param name="locale">Locale needed</param>
         private void ChangeLocale(string locale)
         {
+            // Prevents refreshing the interface when click on the current language.
             if (Thread.CurrentThread.CurrentUICulture.Name.StartsWith(locale) == false)
             {
                 Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(locale);
@@ -185,9 +183,9 @@ namespace WhatsMore
                 this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void MnuOptions_Click(object sender, EventArgs e)
+        private void MnuConfig_Click(object sender, EventArgs e)
         {
-            using (FrmOptions frm = new FrmOptions())
+            using (FrmConfig frm = new FrmConfig())
             {
                 frm.ShowDialog();
             }
@@ -195,12 +193,14 @@ namespace WhatsMore
 
         private void TxtNumbers_TextChanged(object sender, EventArgs e)
         {
+            // Restricts valid input to numbers, spaces, and new lines.
             btnSend.Enabled = (String.IsNullOrWhiteSpace(txtNumbers.Text) == false && 
                 Regex.IsMatch(txtNumbers.Text, "[^0-9\r\n\\s]") == false);
         }
 
         private void TxtNumbers_KeyPress(object sender, KeyPressEventArgs e)
         {
+            // Allows only numbers to be entered in for the phone numbers.
             e.Handled = char.IsDigit(e.KeyChar) == false && char.IsControl(e.KeyChar) == false;
         }
     }

@@ -129,6 +129,9 @@
   <data name="ArgEx_InvalidSenderPhone" xml:space="preserve">
     <value>Número de teléfono del remitente es inválido. No se proporcionó ningún número de teléfono.</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
   <data name="Error_ConfigCorrupt" xml:space="preserve">
     <value>Error: La configuración está dañada. Por favor reconfigure el programa para enviar mensajes.</value>
   </data>
@@ -147,5 +150,8 @@ Por favor, configure el programa para enviar mensajes.</value>
   </data>
   <data name="Info_SentSuccessful" xml:space="preserve">
     <value>Enviado {0} de {1} mensajes con éxito.</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Enviar</value>
   </data>
 </root>

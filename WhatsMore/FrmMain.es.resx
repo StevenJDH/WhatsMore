@@ -127,9 +127,6 @@
   <data name="mnuFile.Text" xml:space="preserve">
     <value>Archivo</value>
   </data>
-  <data name="mnuExit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
   <data name="mnuExit.Text" xml:space="preserve">
     <value>Salir</value>
   </data>
@@ -139,11 +136,8 @@
   <data name="mnuEdit.Text" xml:space="preserve">
     <value>Editar</value>
   </data>
-  <data name="mnuOptions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
-  <data name="mnuOptions.Text" xml:space="preserve">
-    <value>Opciones...</value>
+  <data name="mnuConfig.Text" xml:space="preserve">
+    <value>Configuración...</value>
   </data>
   <data name="mnuLanguage.Size" type="System.Drawing.Size, System.Drawing">
     <value>56, 20</value>
@@ -151,20 +145,11 @@
   <data name="mnuLanguage.Text" xml:space="preserve">
     <value>Idioma</value>
   </data>
-  <data name="mnuEnglish.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
-  <data name="mnuSpanish.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
   <data name="mnuHelp.Size" type="System.Drawing.Size, System.Drawing">
     <value>53, 20</value>
   </data>
   <data name="mnuHelp.Text" xml:space="preserve">
     <value>Ayuda</value>
-  </data>
-  <data name="mnuAbout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
   </data>
   <data name="mnuAbout.Text" xml:space="preserve">
     <value>Acerca de...</value>

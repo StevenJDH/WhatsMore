@@ -55,6 +55,7 @@
     <Compile Include="Classes\AES.cs" />
     <Compile Include="Classes\Connection.cs" />
     <Compile Include="Classes\Configuration.cs" />
+    <Compile Include="Classes\Ref.cs" />
     <Compile Include="Classes\WaboxAppPhoneInfoResponse.cs" />
     <Compile Include="FrmMain.cs">
       <SubType>Form</SubType>
@@ -62,11 +63,11 @@
     <Compile Include="FrmMain.Designer.cs">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmOptions.cs">
+    <Compile Include="FrmConfig.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmOptions.Designer.cs">
-      <DependentUpon>FrmOptions.cs</DependentUpon>
+    <Compile Include="FrmConfig.Designer.cs">
+      <DependentUpon>FrmConfig.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -83,11 +84,11 @@
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrmOptions.es.resx">
-      <DependentUpon>FrmOptions.cs</DependentUpon>
+    <EmbeddedResource Include="FrmConfig.es.resx">
+      <DependentUpon>FrmConfig.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrmOptions.resx">
-      <DependentUpon>FrmOptions.cs</DependentUpon>
+    <EmbeddedResource Include="FrmConfig.resx">
+      <DependentUpon>FrmConfig.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -115,7 +116,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />

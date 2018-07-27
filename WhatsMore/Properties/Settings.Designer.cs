@@ -34,5 +34,17 @@ namespace WhatsMore.Properties {
                 this["isSending"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ControlsEnabled {
+            get {
+                return ((bool)(this["ControlsEnabled"]));
+            }
+            set {
+                this["ControlsEnabled"] = value;
+            }
+        }
     }
 }

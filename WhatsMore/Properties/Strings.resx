@@ -129,6 +129,9 @@
   <data name="ArgEx_InvalidSenderPhone" xml:space="preserve">
     <value>Invalid phone number for sender. No phone number was provided.</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="Error_ConfigCorrupt" xml:space="preserve">
     <value>Error: The configuration is corrupt. Please reconfigure the program to send messages.</value>
   </data>
@@ -147,5 +150,8 @@ Please configure the program to send messages.</value>
   </data>
   <data name="Info_SentSuccessful" xml:space="preserve">
     <value>Sent {0} of {1} messages successfully.</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Send</value>
   </data>
 </root>

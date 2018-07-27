@@ -25,6 +25,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Web;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace WhatsMore
 {
@@ -84,15 +85,82 @@ namespace WhatsMore
             string url = $"https://www.waboxapp.com/api/send/chat";
             string postData = $"token={ApiToken}&uid={Sender}&to={recipient.Trim()}&custom_uid={msgID}&text={HttpUtility.UrlEncode(message.Trim())}";
 
-            try
+            return await APIServiceCallAsync<WaboxAppResponse>(url, postData);
+        }
+        
+        /// <summary>
+        /// Sends a predefined message to all the phone numbers listed in a TextBox control.
+        /// </summary>
+        /// <param name="phoneNumbers">A list of phone numbers in a TextBox</param>
+        /// <param name="message">Text message that the recipient will receive</param>
+        /// <param name="notSentList">A list of numbers that had sending issues or got canceled</param>
+        /// <param name="progress">Outputs progress information to a ProgressBar control</param>
+        /// <param name="cancelToken">Boolean object used to check for canceling the batch process</param>
+        /// <returns>Task object to await on</returns>
+        public async Task SendBatchMessagesAsync(TextBox phoneNumbers, string message, List<string> notSentList, 
+            ProgressBar progress, Ref<bool> cancelToken)
+        {
+            // Removes blank lines from list of numbers.
+            phoneNumbers.Text = Regex.Replace(phoneNumbers.Text, "\\s+\r\n", "\r\n").Trim();
+
+            int totalNumbers = phoneNumbers.Lines.Length;
+            WaboxAppResponse response = null;
+
+            // Sets the upper bounds in the progress bar.
+            progress.Maximum = totalNumbers;
+
+            for (int i = 0; i < totalNumbers; i++)
             {
-                return await APIServiceCallAsync<WaboxAppResponse>(url, postData);
+                if (cancelToken == false)
+                {
+                    string msgID = Guid.NewGuid().ToString("N"); // The 'N' removes dashes in GUID.
+                    
+                    try
+                    {
+                        response = await SendMessageAsync(/* "32" + */ phoneNumbers.Lines[i], msgID, message);
+                    }
+                    catch (HttpRequestException)
+                    {
+                        // Numbers that had sending issues or that were canceled are silently tracked instead.
+                        response = null;
+                    }
+
+                    if (response == null || response.HasError)
+                    {
+                        notSentList.Add(phoneNumbers.Lines[i]);
+                    }
+
+                    progress.Value += 1;
+                    SetProgressNoAnimation(progress);
+                }
+                else
+                {
+                    // Adds remaining numbers to list after a cancellation request.
+                    notSentList.Add(phoneNumbers.Lines[i]);
+                }
             }
-            catch (HttpRequestException)
+        }
+
+        /// <summary>
+        /// Speeds up progress bar aero animation to effectively disable it so that it is
+        /// more responsive during value changes.
+        /// </summary>
+        /// <param name="pb">The progress bar to act on</param>
+        private void SetProgressNoAnimation(ProgressBar pb)
+        {
+            // To get around this animation, we need to move the progress bar backwards.
+            // Special case (can't set value > Maximum).
+            if (pb.Value == pb.Maximum)
             {
-                // For now, we don't care about individual errors as this is a batch job.
-                // The caller will be tracking which numbers had issues when sending.
-                return null;
+                pb.Maximum += 1;
+                pb.Value += 1; // Moves past
+                pb.Value -= 1; // and back to set correct value
+                pb.Maximum -= 1;
+            }
+            else
+            {
+                pb.Value += 1; // Moves past
+                pb.Value -= 1; // and back to set correct value
             }
         }
 

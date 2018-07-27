@@ -97,6 +97,15 @@ namespace WhatsMore.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error: The configuration is corrupt. Please reconfigure the program to send messages..
         /// </summary>
         internal static string Error_ConfigCorrupt {
@@ -148,6 +157,15 @@ namespace WhatsMore.Properties {
         internal static string Info_SentSuccessful {
             get {
                 return ResourceManager.GetString("Info_SentSuccessful", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send.
+        /// </summary>
+        internal static string Send {
+            get {
+                return ResourceManager.GetString("Send", resourceCulture);
             }
         }
     }

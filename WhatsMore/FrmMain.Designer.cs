@@ -34,7 +34,7 @@
             this.mnuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuExit = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuEdit = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuOptions = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuConfig = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuLanguage = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuEnglish = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuSpanish = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,21 +80,23 @@
             // mnuEdit
             // 
             this.mnuEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuOptions});
+            this.mnuConfig});
             this.mnuEdit.Name = "mnuEdit";
             resources.ApplyResources(this.mnuEdit, "mnuEdit");
             // 
-            // mnuOptions
+            // mnuConfig
             // 
-            this.mnuOptions.Name = "mnuOptions";
-            resources.ApplyResources(this.mnuOptions, "mnuOptions");
-            this.mnuOptions.Click += new System.EventHandler(this.MnuOptions_Click);
+            this.mnuConfig.Enabled = global::WhatsMore.Properties.Settings.Default.ControlsEnabled;
+            this.mnuConfig.Name = "mnuConfig";
+            resources.ApplyResources(this.mnuConfig, "mnuConfig");
+            this.mnuConfig.Click += new System.EventHandler(this.MnuConfig_Click);
             // 
             // mnuLanguage
             // 
             this.mnuLanguage.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuEnglish,
             this.mnuSpanish});
+            this.mnuLanguage.Enabled = global::WhatsMore.Properties.Settings.Default.ControlsEnabled;
             this.mnuLanguage.Name = "mnuLanguage";
             resources.ApplyResources(this.mnuLanguage, "mnuLanguage");
             // 
@@ -182,7 +184,7 @@
         private System.Windows.Forms.ToolStripMenuItem mnuEnglish;
         private System.Windows.Forms.ToolStripMenuItem mnuSpanish;
         private System.Windows.Forms.ToolStripMenuItem mnuAbout;
-        private System.Windows.Forms.ToolStripMenuItem mnuOptions;
+        private System.Windows.Forms.ToolStripMenuItem mnuConfig;
     }
 }
 

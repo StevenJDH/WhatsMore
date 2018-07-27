@@ -29,17 +29,17 @@ using System.Windows.Forms;
 
 namespace WhatsMore
 {
-    public partial class FrmOptions : Form
+    public partial class FrmConfig : Form
     {
         private readonly Configuration config;
 
-        public FrmOptions()
+        public FrmConfig()
         {
             InitializeComponent();
             config = Configuration.Instance;
         }
 
-        private void FrmOptions_Load(object sender, EventArgs e)
+        private void FrmConfig_Load(object sender, EventArgs e)
         {
             txtNumber.Text = config.Sender;
             txtAPI.Text = config.ApiToken;
