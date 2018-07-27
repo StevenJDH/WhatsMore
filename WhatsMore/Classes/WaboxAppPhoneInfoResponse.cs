@@ -47,8 +47,8 @@ namespace WhatsMore
         [JsonProperty(PropertyName = "platform")]
         public string PhonePlatform { get => phonePlatform; set => phonePlatform = value; }
 
-        [JsonProperty(PropertyName = "battery")]
-        public int BatteryPercentage { get => batteryPercentage; set => batteryPercentage = value; }
+        [JsonProperty(PropertyName = "battery")] // Server response may return null value for battery so we use -1 in its place.
+        public int? BatteryPercentage { get => batteryPercentage; set => batteryPercentage = value ?? -1; }
 
         [JsonProperty(PropertyName = "plugged")]
         public string IsPluggedIn { get => isPluggedIn; set => isPluggedIn = value; }
