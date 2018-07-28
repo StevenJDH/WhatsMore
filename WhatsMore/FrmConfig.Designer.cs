@@ -46,6 +46,7 @@
             // 
             // txtNumber
             // 
+            this.txtNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             resources.ApplyResources(this.txtNumber, "txtNumber");
             this.txtNumber.Name = "txtNumber";
             this.txtNumber.TextChanged += new System.EventHandler(this.TxtNumber_TextChanged);
@@ -53,6 +54,7 @@
             // 
             // txtAPI
             // 
+            this.txtAPI.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             resources.ApplyResources(this.txtAPI, "txtAPI");
             this.txtAPI.Name = "txtAPI";
             this.txtAPI.TextChanged += new System.EventHandler(this.TxtAPI_TextChanged);
@@ -64,6 +66,7 @@
             // 
             // txtMessage
             // 
+            this.txtMessage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             resources.ApplyResources(this.txtMessage, "txtMessage");
             this.txtMessage.Name = "txtMessage";
             this.txtMessage.TextChanged += new System.EventHandler(this.TxtMessage_TextChanged);
