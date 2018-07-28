@@ -57,16 +57,16 @@
             // 
             // groupBox1
             // 
-            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Controls.Add(this.rtxtLicense);
+            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.TabStop = false;
             // 
             // rtxtLicense
             // 
-            resources.ApplyResources(this.rtxtLicense, "rtxtLicense");
             this.rtxtLicense.BackColor = System.Drawing.Color.White;
             this.rtxtLicense.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            resources.ApplyResources(this.rtxtLicense, "rtxtLicense");
             this.rtxtLicense.Name = "rtxtLicense";
             this.rtxtLicense.ReadOnly = true;
             // 
@@ -94,8 +94,8 @@
             // 
             // pnlButtonImage
             // 
-            resources.ApplyResources(this.pnlButtonImage, "pnlButtonImage");
             this.pnlButtonImage.BackgroundImage = global::WhatsMore.Properties.Resources.donation_button;
+            resources.ApplyResources(this.pnlButtonImage, "pnlButtonImage");
             this.pnlButtonImage.Controls.Add(this.lblButton);
             this.pnlButtonImage.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pnlButtonImage.Name = "pnlButtonImage";
@@ -103,9 +103,9 @@
             // 
             // lblButton
             // 
-            resources.ApplyResources(this.lblButton, "lblButton");
             this.lblButton.BackColor = System.Drawing.Color.Orange;
             this.lblButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            resources.ApplyResources(this.lblButton, "lblButton");
             this.lblButton.ForeColor = System.Drawing.SystemColors.ControlText;
             this.lblButton.Name = "lblButton";
             this.lblButton.Click += new System.EventHandler(this.LblButton_Click);
@@ -126,6 +126,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmAbout";
+            this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Load += new System.EventHandler(this.FrmAbout_Load);
             this.groupBox1.ResumeLayout(false);
