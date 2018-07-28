@@ -179,8 +179,10 @@ namespace WhatsMore
 
         private void MnuAbout_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("WhatsMore 1.0.0 Beta\n\nSteven Jenkins De Haro\nMicrosoft .NET Framework 4.6.1",
-                this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            using (FrmAbout frm = new FrmAbout())
+            {
+                frm.ShowDialog();
+            }
         }
 
         private void MnuConfig_Click(object sender, EventArgs e)

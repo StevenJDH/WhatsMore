@@ -121,6 +121,7 @@
             // 
             // mnuAbout
             // 
+            this.mnuAbout.Enabled = global::WhatsMore.Properties.Settings.Default.ControlsEnabled;
             this.mnuAbout.Name = "mnuAbout";
             resources.ApplyResources(this.mnuAbout, "mnuAbout");
             this.mnuAbout.Click += new System.EventHandler(this.MnuAbout_Click);
