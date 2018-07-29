@@ -6,6 +6,7 @@
 # My additional ignores
 /[Rr]esources
 *.licenseheader
+/[Ss]etups
 
 # User-specific files
 *.suo
