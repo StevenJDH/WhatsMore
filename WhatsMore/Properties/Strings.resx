@@ -144,6 +144,9 @@
   <data name="Error_UnauthorizedSender" xml:space="preserve">
     <value>Error: The number '{0}' is not authorized to send messages.</value>
   </data>
+  <data name="Filter_TextDocuments" xml:space="preserve">
+    <value>Text Documents (*.txt)|*.txt</value>
+  </data>
   <data name="Info_FirstTimeConfig" xml:space="preserve">
     <value>It looks like this is your first time using WhatsMore.
 Please configure the program to send messages.</value>

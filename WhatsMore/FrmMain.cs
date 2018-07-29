@@ -97,8 +97,8 @@ namespace WhatsMore
                         await whatsapp.SendBatchMessagesAsync(txtNumbers, config.Message, notSentList,
                             pbSending, cancelRequested);
 
-                        // Saves to file those numbers that had sending issues or got canceled.
-                        if (notSentList.Count > 0) { SaveNotSent(notSentList); }
+                        // Displays those numbers that need to be retried if any otherwise the view is cleared.
+                        txtNumbers.Text = notSentList.Count > 0 ? NumbersToRetry(notSentList) : "";
 
                         MessageBox.Show(String.Format(Properties.Strings.Info_SentSuccessful,
                             pbSending.Maximum - notSentList.Count, pbSending.Maximum),
@@ -128,17 +128,36 @@ namespace WhatsMore
         }
 
         /// <summary>
-        /// Saves a log to the desktop for those numbers that had issues during the sending
-        /// process. The date and time will be appended to the log so that it doesn't overwrite
-        /// a previous sending session.
+        /// Gets a string representation of the list of numbers that had sending issues and or that 
+        /// were canceled during the sending process for a TextBox.
         /// </summary>
-        /// <param name="numbersList">List of numbers to save to the log</param>
-        private void SaveNotSent(List<string> numbersList)
+        /// <param name="numbersList">List of numbers that need to be retried</param>
+        /// <returns>String representation of the list</returns>
+        private string NumbersToRetry(List<string> numbersList)
         {
-            string desktopPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
-            $"WhatsMore Log_{DateTime.Now.ToString("yyyy-MM-dd_HHmmss")}.txt");
-            
-            File.WriteAllLines(desktopPath, numbersList);
+            StringBuilder sb = new StringBuilder();
+
+            numbersList.ForEach(s => sb.AppendLine(s));
+            return sb.ToString().TrimEnd();
+        }
+
+        private void mnuSaveAs_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.FileName = $"WhatsMore_{DateTime.Now.ToString("yyyy-MM-dd_HHmmss")}.txt";
+            saveFileDialog1.Filter = Properties.Strings.Filter_TextDocuments;
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    File.WriteAllLines(saveFileDialog1.FileName, txtNumbers.Lines);
+                }
+                catch (IOException ex)
+                {
+                    MessageBox.Show($"{ex.GetType().Name}: {ex.Message}", this.Text, 
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         private void FrmMain_Closing(object sender, FormClosingEventArgs e)

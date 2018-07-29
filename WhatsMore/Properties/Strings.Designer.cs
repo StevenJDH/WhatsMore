@@ -142,6 +142,15 @@ namespace WhatsMore.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Text Documents (*.txt)|*.txt.
+        /// </summary>
+        internal static string Filter_TextDocuments {
+            get {
+                return ResourceManager.GetString("Filter_TextDocuments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to It looks like this is your first time using WhatsMore.
         ///Please configure the program to send messages..
         /// </summary>

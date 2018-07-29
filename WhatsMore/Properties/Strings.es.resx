@@ -144,6 +144,9 @@
   <data name="Error_UnauthorizedSender" xml:space="preserve">
     <value>Error: El número '{0}' no está autorizado para enviar mensajes.</value>
   </data>
+  <data name="Filter_TextDocuments" xml:space="preserve">
+    <value>Documentos de texto (*.txt)|*.txt</value>
+  </data>
   <data name="Info_FirstTimeConfig" xml:space="preserve">
     <value>Parece que es la primera vez que usa WhatsMore.
 Por favor, configure el programa para enviar mensajes.</value>

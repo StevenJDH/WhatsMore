@@ -32,6 +32,8 @@
             this.btnSend = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.mnuFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuSaveAs = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuExit = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuEdit = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuConfig = new System.Windows.Forms.ToolStripMenuItem();
@@ -43,6 +45,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.pbSending = new System.Windows.Forms.ProgressBar();
             this.txtNumbers = new System.Windows.Forms.TextBox();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -56,81 +59,95 @@
             // 
             // menuStrip1
             // 
+            resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuFile,
             this.mnuEdit,
             this.mnuLanguage,
             this.mnuHelp});
-            resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Name = "menuStrip1";
             // 
             // mnuFile
             // 
+            resources.ApplyResources(this.mnuFile, "mnuFile");
             this.mnuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuSaveAs,
+            this.toolStripSeparator1,
             this.mnuExit});
             this.mnuFile.Name = "mnuFile";
-            resources.ApplyResources(this.mnuFile, "mnuFile");
+            // 
+            // mnuSaveAs
+            // 
+            resources.ApplyResources(this.mnuSaveAs, "mnuSaveAs");
+            this.mnuSaveAs.Enabled = global::WhatsMore.Properties.Settings.Default.ControlsEnabled;
+            this.mnuSaveAs.Name = "mnuSaveAs";
+            this.mnuSaveAs.Click += new System.EventHandler(this.mnuSaveAs_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
             // 
             // mnuExit
             // 
-            this.mnuExit.Name = "mnuExit";
             resources.ApplyResources(this.mnuExit, "mnuExit");
+            this.mnuExit.Name = "mnuExit";
             this.mnuExit.Click += new System.EventHandler(this.MnuExit_Click);
             // 
             // mnuEdit
             // 
+            resources.ApplyResources(this.mnuEdit, "mnuEdit");
             this.mnuEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuConfig});
             this.mnuEdit.Name = "mnuEdit";
-            resources.ApplyResources(this.mnuEdit, "mnuEdit");
             // 
             // mnuConfig
             // 
+            resources.ApplyResources(this.mnuConfig, "mnuConfig");
             this.mnuConfig.Enabled = global::WhatsMore.Properties.Settings.Default.ControlsEnabled;
             this.mnuConfig.Name = "mnuConfig";
-            resources.ApplyResources(this.mnuConfig, "mnuConfig");
             this.mnuConfig.Click += new System.EventHandler(this.MnuConfig_Click);
             // 
             // mnuLanguage
             // 
+            resources.ApplyResources(this.mnuLanguage, "mnuLanguage");
             this.mnuLanguage.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuEnglish,
             this.mnuSpanish});
             this.mnuLanguage.Enabled = global::WhatsMore.Properties.Settings.Default.ControlsEnabled;
             this.mnuLanguage.Name = "mnuLanguage";
-            resources.ApplyResources(this.mnuLanguage, "mnuLanguage");
             // 
             // mnuEnglish
             // 
-            this.mnuEnglish.Name = "mnuEnglish";
             resources.ApplyResources(this.mnuEnglish, "mnuEnglish");
+            this.mnuEnglish.Name = "mnuEnglish";
             this.mnuEnglish.Click += new System.EventHandler(this.MnuEnglish_Click);
             // 
             // mnuSpanish
             // 
-            this.mnuSpanish.Name = "mnuSpanish";
             resources.ApplyResources(this.mnuSpanish, "mnuSpanish");
+            this.mnuSpanish.Name = "mnuSpanish";
             this.mnuSpanish.Click += new System.EventHandler(this.MnuSpanish_Click);
             // 
             // mnuHelp
             // 
+            resources.ApplyResources(this.mnuHelp, "mnuHelp");
             this.mnuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuAbout});
             this.mnuHelp.Name = "mnuHelp";
-            resources.ApplyResources(this.mnuHelp, "mnuHelp");
             // 
             // mnuAbout
             // 
+            resources.ApplyResources(this.mnuAbout, "mnuAbout");
             this.mnuAbout.Enabled = global::WhatsMore.Properties.Settings.Default.ControlsEnabled;
             this.mnuAbout.Name = "mnuAbout";
-            resources.ApplyResources(this.mnuAbout, "mnuAbout");
             this.mnuAbout.Click += new System.EventHandler(this.MnuAbout_Click);
             // 
             // groupBox1
             // 
+            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Controls.Add(this.pbSending);
             this.groupBox1.Controls.Add(this.txtNumbers);
-            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.TabStop = false;
             // 
@@ -141,13 +158,17 @@
             // 
             // txtNumbers
             // 
+            resources.ApplyResources(this.txtNumbers, "txtNumbers");
             this.txtNumbers.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtNumbers.DataBindings.Add(new System.Windows.Forms.Binding("ReadOnly", global::WhatsMore.Properties.Settings.Default, "isSending", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            resources.ApplyResources(this.txtNumbers, "txtNumbers");
             this.txtNumbers.Name = "txtNumbers";
             this.txtNumbers.ReadOnly = global::WhatsMore.Properties.Settings.Default.isSending;
             this.txtNumbers.TextChanged += new System.EventHandler(this.TxtNumbers_TextChanged);
             this.txtNumbers.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumbers_KeyPress);
+            // 
+            // saveFileDialog1
+            // 
+            resources.ApplyResources(this.saveFileDialog1, "saveFileDialog1");
             // 
             // FrmMain
             // 
@@ -186,6 +207,9 @@
         private System.Windows.Forms.ToolStripMenuItem mnuSpanish;
         private System.Windows.Forms.ToolStripMenuItem mnuAbout;
         private System.Windows.Forms.ToolStripMenuItem mnuConfig;
+        private System.Windows.Forms.ToolStripMenuItem mnuSaveAs;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }
 
