@@ -117,11 +117,11 @@ namespace WhatsMore
                     
                     try
                     {
-                        response = await SendMessageAsync(/* "32" + */ phoneNumbers.Lines[i], msgID, message);
+                        response = await SendMessageAsync(phoneNumbers.Lines[i], msgID, message);
                     }
-                    catch (HttpRequestException)
+                    catch (Exception ex) when (ex is HttpRequestException || ex is JsonException)
                     {
-                        // Numbers that had sending issues or that were canceled are silently tracked instead.
+                        // Numbers that had sending issues and or that were canceled are silently tracked instead.
                         response = null;
                     }
 
@@ -130,8 +130,8 @@ namespace WhatsMore
                         notSentList.Add(phoneNumbers.Lines[i]);
                     }
 
-                    progress.Value += 1;
-                    SetProgressNoAnimation(progress);
+                    // Updates progress
+                    IncrementProgressNoAnimation(progress);
                 }
                 else
                 {
@@ -142,15 +142,16 @@ namespace WhatsMore
         }
 
         /// <summary>
-        /// Speeds up progress bar aero animation to effectively disable it so that it is
-        /// more responsive during value changes.
+        /// Increments a progress bar and speeds up the aero animation to effectively disable 
+        /// it so that it is more responsive during value changes.
         /// </summary>
-        /// <param name="pb">The progress bar to act on</param>
-        private void SetProgressNoAnimation(ProgressBar pb)
+        /// <param name="pb">The progress bar to increment</param>
+        private void IncrementProgressNoAnimation(ProgressBar pb)
         {
-            // To get around this animation, we need to move the progress bar backwards.
-            // Special case (can't set value > Maximum).
-            if (pb.Value == pb.Maximum)
+            pb.Value += 1; // Increments progress bar.
+
+            // Prevents the animation by moving the progress bar backwards.
+            if (pb.Value == pb.Maximum) // Special case, can't set value > Maximum.
             {
                 pb.Maximum += 1;
                 pb.Value += 1; // Moves past
