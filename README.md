@@ -9,7 +9,7 @@ Changelog: [https://github.com/StevenJDH/WhatsMore/wiki/Changelog](https://githu
 
 ## Features
 * Send customizable messages to multiple WhatsApp users at the same time.
-* Numbers with sending issues are logged so you can retry them again.
+* Numbers with sending issues and or that are canceled are tracked so you can retry them again or save them for later.
 * Localized for English and Spanish while making it easy to support more languages.
 
 ## API service and pricing
