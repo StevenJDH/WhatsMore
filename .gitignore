@@ -7,6 +7,7 @@
 /[Rr]esources
 *.licenseheader
 /[Ss]etups
+/[Nn][Ss][Ii][Ss] [Ii]nstaller [Pp]roject/*.exe
 
 # User-specific files
 *.suo
