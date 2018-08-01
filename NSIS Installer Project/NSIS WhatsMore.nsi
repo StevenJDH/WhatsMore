@@ -17,15 +17,16 @@
  */
 
   ;NSIS Modern User Interface
-  ;Multilingual Script
-  
+  ;Multilingual (All Users) Script v1.1
+
   !pragma warning error all
   SetCompressor lzma
   Unicode true ;Properly display all languages (Installer will not work on Windows 95, 98 or ME!)
+  
 ;--------------------------------
 ;Includes 
 
-  !include "MUI2.nsh" ;Modern UI 2
+  !include "MUI2.nsh"
   !include "FileFunc.nsh"
 
 ;--------------------------------
@@ -33,12 +34,12 @@
 
   !define PRODUCT_NAME "WhatsMore"
   !define PRODUCT_VERSION "1.0.0"
-  !define PRODUCT_PUBLISHER "Steven Jenkins De Haro"
+  !define COMPANY_NAME "Steven Jenkins De Haro"
   !define PRODUCT_WEB_SITE "https://github.com/StevenJDH/WhatsMore"
   !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
   !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 
-  !define CONFIG_DIRECTORY "$APPDATA\WhatsMore"
+  !define CONFIG_DIRECTORY "$APPDATA\${PRODUCT_NAME}"
   !define CONFIG_FILE "${CONFIG_DIRECTORY}\WhatsMoreConfig.json"
   
   !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\nsis3-install.ico" ;Installer icon
@@ -55,6 +56,7 @@
   Name "${PRODUCT_NAME}"
   Caption "${PRODUCT_NAME} ${PRODUCT_VERSION}" ;Default is used if left empty or removed.
   OutFile "${PRODUCT_NAME} Setup.exe"
+  BrandingText "Copyright © 2018 ${COMPANY_NAME}"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\${PRODUCT_NAME}"
@@ -92,6 +94,7 @@
   !insertmacro MUI_PAGE_FINISH
   
   !insertmacro MUI_UNPAGE_WELCOME
+  !insertmacro MUI_UNPAGE_COMPONENTS
   !insertmacro MUI_UNPAGE_CONFIRM
   !insertmacro MUI_UNPAGE_INSTFILES
   !insertmacro MUI_UNPAGE_FINISH
@@ -123,7 +126,7 @@
   LangString COMP_SMShortcut ${LANG_ENGLISH} "Start Menu Shortcut"
   LangString COMP_DShortcut ${LANG_ENGLISH} "Desktop Shortcut"
   LangString COMP_Core ${LANG_SPANISH} "${PRODUCT_NAME} archivos principales (requerido)"
-  LangString COMP_SMShortcut ${LANG_SPANISH} "acceso directo del menú de inicio"
+  LangString COMP_SMShortcut ${LANG_SPANISH} "Acceso directo del menú de inicio"
   LangString COMP_DShortcut ${LANG_SPANISH} "Acceso directo de escritorio"
 
   InstType $(COMP_Full)
@@ -170,7 +173,7 @@ Section -Post
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLUpdateInfo" "${PRODUCT_WEB_SITE}"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${COMPANY_NAME}"
   ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
   IntFmt $0 "0x%08X" $0
   WriteRegDWORD ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "EstimatedSize" "$0"
@@ -183,16 +186,7 @@ Section -Post
 SectionEnd
 
 ;--------------------------------
-;Installer Functions
-
-Function .onInit
-
-  !insertmacro MUI_LANGDLL_DISPLAY ;This has to come after the language macros
-  
-FunctionEnd
-
-;--------------------------------
-;Descriptions
+;Descriptions for Installer
 
   LangString DESC_SecCore ${LANG_ENGLISH} "The core files required to use ${PRODUCT_NAME}."
   LangString DESC_SecStartMenu ${LANG_ENGLISH} "Adds an icon to your start menu for easy access."
@@ -209,13 +203,25 @@ FunctionEnd
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
+;Installer Functions
+
+Function .onInit
+
+  !insertmacro MUI_LANGDLL_DISPLAY ;This has to come after the language macros
+
+FunctionEnd
+
+;--------------------------------
 ;Uninstaller Section
 
-  LangString MSGQ_DeleteConfig ${LANG_ENGLISH} "Do you want to delete your configuration? Click 'No' if you plan to use this program again."
-  LangString MSGQ_DeleteConfig ${LANG_SPANISH} "¿Quieres eliminar tu configuración? Haga clic en 'No' si planea usar este programa nuevamente."
-  
-Section "Uninstall"
+  LangString UNCOMP_Core ${LANG_ENGLISH} "Uninstall Core Files (required)"
+  LangString UNCOMP_RemoveConfig ${LANG_ENGLISH} "Remove Configuration"
+  LangString UNCOMP_Core ${LANG_SPANISH} "Desinstalar archivos principales (requerido)"
+  LangString UNCOMP_RemoveConfig ${LANG_SPANISH} "Eliminar configuración"
 
+Section "un.$(UNCOMP_Core)" SectionCoreUninstall
+  SectionIn RO
+  
   ;Stuff to uninstall/remove...
   Delete "$INSTDIR\Uninstall.exe"
   Delete "$INSTDIR\WhatsMore.exe"
@@ -233,16 +239,31 @@ Section "Uninstall"
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "Software\${PRODUCT_NAME}" ;Removes language choice.
 
+SectionEnd
+
+Section /o "un.$(UNCOMP_RemoveConfig)" SectionRemoveConfig
+
   ;This will remove the configuration created by the application.
-  MessageBox MB_ICONQUESTION|MB_YESNO $(MSGQ_DeleteConfig) IDYES true IDNO false
-  true:
-    IfFileExists "${CONFIG_FILE}" 0
-      Delete "${CONFIG_FILE}"
-    IfFileExists "${CONFIG_DIRECTORY}\*.*" 0
-      RMDir "${CONFIG_DIRECTORY}"
-  false:
+  IfFileExists "${CONFIG_FILE}" 0
+    Delete "${CONFIG_FILE}"
+  IfFileExists "${CONFIG_DIRECTORY}\*.*" 0
+    RMDir "${CONFIG_DIRECTORY}"
 
 SectionEnd
+
+;--------------------------------
+;Descriptions for Uninstaller
+
+  LangString DESC_SecCoreUninstall ${LANG_ENGLISH} "The core files required by ${PRODUCT_NAME}."
+  LangString DESC_SecRemoveConfig ${LANG_ENGLISH} "Leave this unchecked if you plan to use ${PRODUCT_NAME} again."
+  LangString DESC_SecCoreUninstall ${LANG_SPANISH} "Los archivos principales requeridos por ${PRODUCT_NAME}."
+  LangString DESC_SecRemoveConfig ${LANG_SPANISH} "Deje esto sin marcar si planea usar ${PRODUCT_NAME} de nuevo."
+
+  ;Assign descriptions to sections
+  !insertmacro MUI_UNFUNCTION_DESCRIPTION_BEGIN
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionCoreUninstall} $(DESC_SecCoreUninstall)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionRemoveConfig} $(DESC_SecRemoveConfig)
+  !insertmacro MUI_UNFUNCTION_DESCRIPTION_END
 
 ;--------------------------------
 ;Uninstaller Functions
