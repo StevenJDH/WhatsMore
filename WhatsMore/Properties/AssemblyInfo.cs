@@ -24,12 +24,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("WhatsMore")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Batch send messages to multiple WhatsApp users from your computer.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Steven Jenkins De Haro")]
 [assembly: AssemblyProduct("WhatsMore")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("Copyright ©  2018 Steven Jenkins De Haro")]
+[assembly: AssemblyTrademark("WhatsMore and all logos are trademarks of Steven Jenkins De Haro.")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
