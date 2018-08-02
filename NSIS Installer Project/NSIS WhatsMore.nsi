@@ -17,7 +17,7 @@
  */
 
   ;NSIS Modern User Interface
-  ;Multilingual (Multi Users) Script
+  ;Multilingual (Multi User) Script
   !define INSTALLER_VERSION 1.2
 
   !pragma warning error all
@@ -73,13 +73,14 @@
   BrandingText "${COPYRIGHT_TEXT}"
   
   ;Installer properties
-  VIProductVersion "${INSTALLER_VERSION}.0.0" ;This one doubles as FileVersion and requires x.x.x.x format.
+  VIFileVersion "${INSTALLER_VERSION}.0.0" ;Will use VIProductVersion if not defined. Requires x.x.x.x format.
+  VIProductVersion "${PRODUCT_VERSION}.0" ;Requires x.x.x.x format.
   VIAddVersionKey ProductName "${PRODUCT_NAME}"
   VIAddVersionKey Comments "This program is being distributed under the terms of the GNU General Public License (GPL)."
   VIAddVersionKey CompanyName "${COMPANY_NAME}"
   VIAddVersionKey LegalCopyright "${COPYRIGHT_TEXT}"
   VIAddVersionKey FileDescription "Batch send messages to multiple WhatsApp users from your computer."
-  VIAddVersionKey FileVersion "${INSTALLER_VERSION}.0.0"
+  VIAddVersionKey FileVersion "${INSTALLER_VERSION}"
   VIAddVersionKey ProductVersion ${PRODUCT_VERSION}
   VIAddVersionKey InternalName "${PRODUCT_NAME}"
   VIAddVersionKey LegalTrademarks "${PRODUCT_NAME} and all logos are trademarks of ${COMPANY_NAME}."
