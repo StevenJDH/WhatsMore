@@ -17,27 +17,41 @@
  */
 
   ;NSIS Modern User Interface
-  ;Multilingual (All Users) Script v1.1
+  ;Multilingual (Multi Users) Script
+  !define INSTALLER_VERSION 1.2
 
   !pragma warning error all
   SetCompressor lzma
-  Unicode true ;Properly display all languages (Installer will not work on Windows 95, 98 or ME!)
+  Unicode true
+  
+  ;The following defines have to appear before including "MultiUser.nsh" to work.
+  !define PRODUCT_NAME "WhatsMore"
+  !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
+  ;MULTIUSER_INSTALLMODE_DEFAULT_CURRENTUSER ;Sets default to a per-user installation, even if per-machine rights are available.
+  !define MULTIUSER_INSTALLMODE_INSTDIR "${PRODUCT_NAME}"
+  !define MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY "${PRODUCT_UNINST_KEY}"
+  !define MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME "InstallLocation"
+  ;!define MULTIUSER_USE_PROGRAMFILES64
+  !define MULTIUSER_EXECUTIONLEVEL Highest
+  !define MULTIUSER_MUI
+  !define MULTIUSER_INSTALLMODE_COMMANDLINE
   
 ;--------------------------------
 ;Includes 
 
+  !include "MultiUser.nsh"
   !include "MUI2.nsh"
   !include "FileFunc.nsh"
 
 ;--------------------------------
 ;General
 
-  !define PRODUCT_NAME "WhatsMore"
   !define PRODUCT_VERSION "1.0.0"
+  !define MIN_WIN_VER "7"
   !define COMPANY_NAME "Steven Jenkins De Haro"
+  !define COPYRIGHT_TEXT "Copyright © 2018 ${COMPANY_NAME}"
   !define PRODUCT_WEB_SITE "https://github.com/StevenJDH/WhatsMore"
-  !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
-  !define PRODUCT_UNINST_ROOT_KEY "HKLM"
+  !define PRODUCT_UNINST_ROOT_KEY SHCTX
 
   !define CONFIG_DIRECTORY "$APPDATA\${PRODUCT_NAME}"
   !define CONFIG_FILE "${CONFIG_DIRECTORY}\WhatsMoreConfig.json"
@@ -52,20 +66,24 @@
   !define MUI_UNWELCOMEFINISHPAGE_BITMAP "Custom Graphics\Wizard\164_X_314_computer.bmp"
   !define MUI_COMPONENTSPAGE_SMALLDESC ;Puts component description on the bottom.
 
-  ;Name, title bar caption, and file
+  ;Name, title bar caption, file, and branding
   Name "${PRODUCT_NAME}"
   Caption "${PRODUCT_NAME} ${PRODUCT_VERSION}" ;Default is used if left empty or removed.
   OutFile "${PRODUCT_NAME} Setup.exe"
-  BrandingText "Copyright © 2018 ${COMPANY_NAME}"
-
-  ;Default installation folder
-  InstallDir "$PROGRAMFILES\${PRODUCT_NAME}"
+  BrandingText "${COPYRIGHT_TEXT}"
   
-  ;Get installation folder from registry if available
-  InstallDirRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "InstallLocation"
-
-  ;Request application privileges for Windows Vista+
-  RequestExecutionLevel admin
+  ;Installer properties
+  VIProductVersion "${INSTALLER_VERSION}.0.0" ;This one doubles as FileVersion and requires x.x.x.x format.
+  VIAddVersionKey ProductName "${PRODUCT_NAME}"
+  VIAddVersionKey Comments "This program is being distributed under the terms of the GNU General Public License (GPL)."
+  VIAddVersionKey CompanyName "${COMPANY_NAME}"
+  VIAddVersionKey LegalCopyright "${COPYRIGHT_TEXT}"
+  VIAddVersionKey FileDescription "Batch send messages to multiple WhatsApp users from your computer."
+  VIAddVersionKey FileVersion "${INSTALLER_VERSION}.0.0"
+  VIAddVersionKey ProductVersion ${PRODUCT_VERSION}
+  VIAddVersionKey InternalName "${PRODUCT_NAME}"
+  VIAddVersionKey LegalTrademarks "${PRODUCT_NAME} and all logos are trademarks of ${COMPANY_NAME}."
+  VIAddVersionKey OriginalFilename "${PRODUCT_NAME}.exe"
 
 ;--------------------------------
 ;Interface Settings
@@ -88,6 +106,7 @@
 
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE "..\LICENSE"
+  !insertmacro MULTIUSER_PAGE_INSTALLMODE
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
@@ -104,6 +123,9 @@
 
   !insertmacro MUI_LANGUAGE "English" ; The first language is the default language
   !insertmacro MUI_LANGUAGE "Spanish"
+
+  LangString MODE_CurrentUser ${LANG_ENGLISH} "(Current User)"
+  LangString MODE_CurrentUser ${LANG_SPANISH} "(Usuario actual)"
 
 ;--------------------------------
 ;Reserve Files
@@ -149,15 +171,24 @@ Section $(COMP_SMShortcut) SectionStartMenu
 SectionIn 1 2
 
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME}"
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk" "$INSTDIR\WhatsMore.exe"
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+  ${If} $MultiUser.InstallMode == "CurrentUser"
+    CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME} $(MODE_CurrentUser).lnk" "$INSTDIR\WhatsMore.exe"
+    CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\Uninstall $(MODE_CurrentUser).lnk" "$INSTDIR\Uninstall.exe" "/CurrentUser"
+  ${Else}
+    CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk" "$INSTDIR\WhatsMore.exe"
+    CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "/AllUsers"
+  ${EndIf}
   
 SectionEnd
 
 Section $(COMP_DShortcut) SectionDesktop
 SectionIn 1
 
-  CreateShortCut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\WhatsMore.exe"
+  ${If} $MultiUser.InstallMode == "CurrentUser"
+    CreateShortCut "$DESKTOP\${PRODUCT_NAME} $(MODE_CurrentUser).lnk" "$INSTDIR\WhatsMore.exe"
+  ${Else}
+    CreateShortCut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\WhatsMore.exe"
+  ${EndIf}
   
 SectionEnd
 
@@ -166,9 +197,14 @@ Section -Post
   ;Creates uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe" 
 
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
+  ${If} $MultiUser.InstallMode == "CurrentUser"
+    WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name) $(MODE_CurrentUser)"
+    WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\Uninstall.exe /CurrentUser"
+  ${Else}
+    WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
+    WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\Uninstall.exe /AllUsers"
+  ${EndIf}
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "InstallLocation" "$INSTDIR"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\Uninstall.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\WhatsMore.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
@@ -178,10 +214,8 @@ Section -Post
   IntFmt $0 "0x%08X" $0
   WriteRegDWORD ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "EstimatedSize" "$0"
   ;The following two reg entries are for the Windows' uninstall button so it displays as Uninstall only.
-  IntFmt $0 "0x%08X" 1
-  WriteRegDWORD ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "NoModify" "$0"
-  IntFmt $0 "0x%08X" 1
-  WriteRegDWORD ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "NoRepair" "$0"
+  WriteRegDWORD ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "NoModify" 1
+  WriteRegDWORD ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "NoRepair" 1
   
 SectionEnd
 
@@ -205,8 +239,17 @@ SectionEnd
 ;--------------------------------
 ;Installer Functions
 
+  LangString MSG_NotCompatible ${LANG_ENGLISH} "This program requires at least Windows ${MIN_WIN_VER}."
+  LangString MSG_NotCompatible ${LANG_SPANISH} "Este programa requiere al menos Windows ${MIN_WIN_VER}."
+  
 Function .onInit
 
+  ${ifnot} ${AtLeastWin${MIN_WIN_VER}}
+    MessageBox MB_ICONSTOP $(MSG_NotCompatible) /SD IDOK
+    Quit ; will SetErrorLevel 2 - Installation aborted by script
+  ${endif}
+
+  !insertmacro MULTIUSER_INIT
   !insertmacro MUI_LANGDLL_DISPLAY ;This has to come after the language macros
 
 FunctionEnd
@@ -228,9 +271,15 @@ Section "un.$(UNCOMP_Core)" SectionCoreUninstall
   Delete "$INSTDIR\Newtonsoft.Json.dll"
   Delete "$INSTDIR\es\WhatsMore.resources.dll"
 
-  Delete "$SMPROGRAMS\${PRODUCT_NAME}\Uninstall.lnk"
-  Delete "$DESKTOP\${PRODUCT_NAME}.lnk"
-  Delete "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk"
+  ${If} $MultiUser.InstallMode == "CurrentUser"
+    Delete "$SMPROGRAMS\${PRODUCT_NAME}\Uninstall $(MODE_CurrentUser).lnk"
+    Delete "$DESKTOP\${PRODUCT_NAME} $(MODE_CurrentUser).lnk"
+    Delete "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME} $(MODE_CurrentUser).lnk"
+  ${Else}
+    Delete "$SMPROGRAMS\${PRODUCT_NAME}\Uninstall.lnk"
+    Delete "$DESKTOP\${PRODUCT_NAME}.lnk"
+    Delete "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk"
+  ${EndIf}
 
   RMDir "$SMPROGRAMS\${PRODUCT_NAME}"
   RMDir "$INSTDIR\es"
@@ -270,6 +319,7 @@ SectionEnd
 
 Function un.onInit
 
+  !insertmacro MULTIUSER_UNINIT
   !insertmacro MUI_UNGETLANGUAGE
   
 FunctionEnd
