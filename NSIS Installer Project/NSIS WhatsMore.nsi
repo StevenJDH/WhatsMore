@@ -69,7 +69,7 @@
   ;Name, title bar caption, file, and branding
   Name "${PRODUCT_NAME}"
   Caption "${PRODUCT_NAME} ${PRODUCT_VERSION}" ;Default is used if left empty or removed.
-  OutFile "${PRODUCT_NAME} Setup.exe"
+  OutFile "${PRODUCT_NAME}_Setup.exe"
   BrandingText "${COPYRIGHT_TEXT}"
   
   ;Installer properties
