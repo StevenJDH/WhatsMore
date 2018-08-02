@@ -12,6 +12,9 @@ Changelog: [https://github.com/StevenJDH/WhatsMore/wiki/Changelog](https://githu
 * Numbers with sending issues and or that are canceled are tracked so you can retry them again or save them for later.
 * Localized for English and Spanish while making it easy to support more languages.
 
+## NSIS installer project
+I've included the NSIS (Nullsoft Scriptable Install System) script that I wrote to create the installer for WhatsMore. The script was written with NSIS 3.03, which you can find here [http://nsis.sourceforge.net/Main_Page](http://nsis.sourceforge.net/Main_Page), and it may not work with earlier versions due to missing features in the scripting language. The WhatsMore installer supports installing the program for all users, the current user, or for both at the same time. Silent installs and uninstalls can also be performed, English and Spanish languages are supported, and a restriction of at least Windows 7 is imposed to meet requirements for the .Net Framework version used.
+
 ## API service and pricing
 This program uses the WaboxApp API for sending messages and getting status information about the linked phone. To use WhatsMore, you'll need to create an API token by first opening a free account here [https://www.waboxapp.com](https://www.waboxapp.com) and following the setup process there to link your phone. You are automatically allowed to send 100 free messages each month. The API service takes a pay as you go approach for payment, so you will be charged based on the number of messages you send, and only if you go over those 100 free messages each month. Current prices can be found here [https://www.waboxapp.com/pricing](https://www.waboxapp.com/pricing) on the WaboxApp website.
 
