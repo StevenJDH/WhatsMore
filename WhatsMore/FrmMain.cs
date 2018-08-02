@@ -141,7 +141,7 @@ namespace WhatsMore
             return sb.ToString().TrimEnd();
         }
 
-        private void mnuSaveAs_Click(object sender, EventArgs e)
+        private void MnuSaveAs_Click(object sender, EventArgs e)
         {
             saveFileDialog1.FileName = $"WhatsMore_{DateTime.Now.ToString("yyyy-MM-dd_HHmmss")}.txt";
             saveFileDialog1.Filter = Properties.Strings.Filter_TextDocuments;

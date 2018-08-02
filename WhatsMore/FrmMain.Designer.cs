@@ -81,7 +81,7 @@
             resources.ApplyResources(this.mnuSaveAs, "mnuSaveAs");
             this.mnuSaveAs.Enabled = global::WhatsMore.Properties.Settings.Default.ControlsEnabled;
             this.mnuSaveAs.Name = "mnuSaveAs";
-            this.mnuSaveAs.Click += new System.EventHandler(this.mnuSaveAs_Click);
+            this.mnuSaveAs.Click += new System.EventHandler(this.MnuSaveAs_Click);
             // 
             // toolStripSeparator1
             // 
