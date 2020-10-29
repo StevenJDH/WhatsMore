@@ -1,7 +1,12 @@
 # WhatsMore
+
+![GitHub All Releases](https://img.shields.io/github/downloads/StevenJDH/WhatsMore/total)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/StevenJDH/WhatsMore?include_prereleases)
+![GitHub](https://img.shields.io/github/license/StevenJDH/WhatsMore)
+
 This program enables you to send messages to multiple WhatsApp accounts using your computer. I created WhatsMore to replace a script that a friend was using to do the same because it had some problematic limitations. Unlike other social platforms, WhatsApp still doesn't have an API that lets you send messages to users. They do have a Chat API, but this API only starts a conversation in a browser and is a lot like the 'mailto' protocol for email. As a result, we are left seeking alternative approaches while we wait for WhatsApp to catch up. As for the usefulness of WhatsMore, it will depend on your needs. In the case of my friend, he uses it as part of his business to send reminders to his clients regarding a particular job performed since he found they respond sooner this way than over email.
 
-![Program Screenshot](https://github.com/StevenJDH/WhatsMore/raw/master/whatsmore-ss.jpg "Screenshot")
+![Program Screenshot](whatsmore-ss.jpg "Screenshot")
 
 Releases: [https://github.com/StevenJDH/WhatsMore/releases](https://github.com/StevenJDH/WhatsMore/releases)
 
@@ -21,9 +26,6 @@ This program uses the WaboxApp API for sending messages and getting status infor
 ## Do you have any questions?
 Many commonly asked questions are answered in the FAQ:
 [https://github.com/StevenJDH/WhatsMore/wiki/FAQ](https://github.com/StevenJDH/WhatsMore/wiki/FAQ)
-
-## Need to contact me?
-I can be reached here directly at [https://21.co/stevenjdh](https://21.co/stevenjdh "Contact Page")
 
 ## Want to show your support?
 
